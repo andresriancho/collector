@@ -74,4 +74,4 @@ The results to be collected (ie. CPU and memory usage) is specified using `perfo
 
 `timeout: 1h` specifies that after one hour the `collect` tool will kill the `run_w3af.py` process and continue with the next phases. This parameter is optional, if not specified the `run_w3af.py` command will run until it finishes by itself.
 
-For an example of how the performance output of the `w3af` tool is analyzed, take a look at the [performance-analysis](https://github.com/andresriancho/performance-analysis) repository.
+For an example of how the performance output of the `w3af` tool is analyzed, take a look at the [w3af-performance-analysis](https://github.com/andresriancho/w3af-performance-analysis) repository.
