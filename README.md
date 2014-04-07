@@ -19,6 +19,10 @@ I'm using `yaml` for the configuration format, a complete configuration file wou
 main:
   output: ~/performance_info/
   performance_results: /tmp/*.cpu
+  ec2_instance_size: m1.small
+  security_group: collector
+  keypair: collector
+  ami: ami-51e91b26
 
 before_aws_start:
   - before_aws_start.sh # This one is run locally on this workstation
