@@ -23,6 +23,7 @@ main:
   security_group: collector
   keypair: collector
   ami: ami-51e91b26
+  user: ubuntu
 
 before_aws_start:
   - before_aws_start.sh # This one is run locally on this workstation

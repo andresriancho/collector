@@ -1,9 +1,16 @@
 import logging
 
+from fabric.api import settings
+
 from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
 from aws_collector.aws.keypair import create_keypair
 from aws_collector.utils.collect import collect
+from aws_collector.config.config import (MAIN_CFG, OUTPUT_CFG,
+                                         PERFORMANCE_RESULTS_CFG,
+                                         EC2_INSTANCE_SIZE_CFG,
+                                         SECURITY_GROUP_CFG, KEYPAIR_CFG,
+                                         AMI_CFG, USER_CFG)
 from aws_collector.utils.hook_manager import (HookManager,
                                               BEFORE_AWS_START_HOOK,
                                               AFTER_AWS_START_HOOK, SETUP_HOOK,
@@ -23,10 +30,16 @@ def main():
         return -9
 
     conf = Config(config_file)
-    instance_size = conf.get('main', 'ec2_instance_size')
-    security_group = conf.get('main', 'security_group')
-    keypair = conf.get('main', 'keypair')
-    ami = conf.get('main', 'ami')
+
+    # Configuration to spawn the EC2 instance
+    instance_size = conf.get(MAIN_CFG, EC2_INSTANCE_SIZE_CFG)
+    security_group = conf.get(MAIN_CFG, SECURITY_GROUP_CFG)
+    keypair = conf.get(MAIN_CFG, KEYPAIR_CFG)
+    ami = conf.get(MAIN_CFG, AMI_CFG)
+    user = conf.get(MAIN_CFG, USER_CFG)
+    # Configuration to collect the data
+    performance_results = conf.get(MAIN_CFG, PERFORMANCE_RESULTS_CFG)
+    output = conf.get(MAIN_CFG, OUTPUT_CFG)
 
     # Shortcut
     hook_manager = HookManager(config_file, version)
@@ -57,23 +70,29 @@ def main():
         logging.info('SSH is not ready. Terminating instance.')
         instance.terminate()
 
-    try:
-        hook(AFTER_AWS_START_HOOK)
-        hook(SETUP_HOOK)
-        hook(RUN_HOOK)
-        hook(BEFORE_COLLECT_HOOK)
+    host_string = '%s@%s' % (user, instance.public_ip)
+    key_filename = '%s.pem' % keypair
 
-        # My code
-        collect()
+    with settings(host_string=host_string,
+                  key_filename=key_filename,
+                  host=instance.public_ip):
+        try:
+            hook(AFTER_AWS_START_HOOK)
+            hook(SETUP_HOOK)
+            hook(RUN_HOOK)
+            hook(BEFORE_COLLECT_HOOK)
 
-        # Hooks
-        hook(AFTER_COLLECT_HOOK)
-        hook(BEFORE_AWS_TERMINATE_HOOK)
-    except Exception, e:
-        logging.error('An error was found: "%s"' % e)
-        return -4
-    finally:
-        instance.terminate()
+            # My code
+            collect(performance_results, output)
+
+            # Hooks
+            hook(AFTER_COLLECT_HOOK)
+            hook(BEFORE_AWS_TERMINATE_HOOK)
+        except Exception, e:
+            logging.error('An error was found: "%s"' % e)
+            return -4
+        finally:
+            instance.terminate()
 
     logging.info('Success.')
     return 0
