@@ -5,13 +5,13 @@ import logging
 from fabric.colors import red, yellow, green
 
 
-def configure_logging():
+def configure_logging(debug):
     logging.getLogger('boto').setLevel(logging.CRITICAL)
     logging.getLogger("paramiko").setLevel(logging.CRITICAL)
     logging.getLogger("requests").setLevel(logging.CRITICAL)
         
     console = ColorLog()
-    console.setLevel(logging.DEBUG)
+    console.setLevel(logging.DEBUG if debug else logging.INFO)
     logging.getLogger('').addHandler(console)
     logging.getLogger('').setLevel(logging.DEBUG)
 

@@ -1,0 +1,35 @@
+main:
+  output: ~/performance_info/
+  performance_results: /tmp/*.cpu
+  ec2_instance_size: m1.small
+  security_group: collector
+  keypair: collector
+  ami: ami-51e91b26
+  user: ubuntu
+
+before_aws_start:
+  - before_aws_start.sh # This one is run locally on this workstation
+
+after_aws_start:
+  - after_aws_start.pl # Run right after the AWS instance starts, runs remotely
+  - local_after_aws_start.py:
+      - local: true # Runs locally
+
+setup:
+  - install_w3af.rb
+
+run:
+  - run_w3af.py:
+    - timeout: 1h
+
+before_collect:
+  - compress_results.py
+
+after_collect: # Both are run, one after the other
+  - send_info_to_s3.py
+  - remove_tmp.py
+
+before_aws_terminate:
+  - collect_cloudwatch_info.py:
+     - local: true
+  - some_other_command.py

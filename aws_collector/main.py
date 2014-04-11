@@ -1,4 +1,5 @@
 import logging
+import argparse
 
 from fabric.api import settings
 
@@ -22,9 +23,10 @@ from aws_collector.aws.ec2 import (spawn_host, create_security_group,
 
 
 def main():
-    configure_logging()
+    args = parse_args()
+    config_file, version = args.config, args.version
 
-    config_file, version = parse_args()
+    configure_logging(args.debug)
 
     if not check_configuration(config_file):
         return -9
@@ -102,4 +104,9 @@ def parse_args():
     """
     return: A tuple with config_file, version.
     """
-    raise NotImplementedError
+    parser = argparse.ArgumentParser(description='Collect performance statistics')
+    parser.add_argument('config', help='Configuration file (ie. config.yml)')
+    parser.add_argument('version', help='The version variable to set on the remote EC2 instance')
+    parser.add_argument("--debug", help="Print debugging information", action="store_true")
+    args = parser.parse_args()
+    return args

@@ -31,7 +31,7 @@ before_aws_start:
 after_aws_start:
   - after_aws_start.pl # Run right after the AWS instance starts, runs remotely
   - local_after_aws_start.py:
-      - local # Runs locally
+      - local: true # Runs locally
 
 setup:
   - install_w3af.rb
@@ -49,9 +49,11 @@ after_collect: # Both are run, one after the other
 
 before_aws_terminate:
   - collect_cloudwatch_info.py:
-     - local
+     - local: true
   - some_other_command.py
 ```
+
+All script paths are relative to the configuration file location.
 
 The version of the software to run is set via the command line:
 ```console
