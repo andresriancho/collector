@@ -2,8 +2,9 @@
 
 set -x
 
-cd w3af
-
+#
+#   Create the script
+#
 cat << EOF > /tmp/test-script.w3af
 plugins
 output console,text_file
@@ -35,5 +36,20 @@ start
 exit
 EOF
 
+#
+#   Make sure that we accept the terms and conditions
+#
+mkdir ~/.w3af/
+cat << EOF > ~/.w3af/startup.conf
+[STARTUP_CONFIG]
+auto-update = false
+frequency = D
+last-update = 2014-04-10
+last-commit = 114fc0cd6f339c1a5c98da8ab88aec5ee6b928fc
+accepted-disclaimer = true
+EOF
+
+
 # https://github.com/andresriancho/w3af/wiki/Profiling-memory-and-CPU-usage
+cd w3af
 W3AF_PROFILING=1 ./w3af_console -s /tmp/test-script.w3af

@@ -8,11 +8,12 @@ main:
   user: ubuntu
 
 setup:
+  - setup_apt.sh
   - install_w3af.sh
 
 run:
   - run_w3af.sh:
-    - timeout: 1h
+    - timeout: 15
 
 before_collect:
   - get_perf_data.sh

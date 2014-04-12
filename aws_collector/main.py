@@ -93,7 +93,7 @@ def main():
                 hook(BEFORE_COLLECT_CFG)
 
                 # My code
-                collect(performance_results, output)
+                collect(performance_results, output, version, instance)
 
                 # Hooks
                 hook(AFTER_COLLECT_CFG)
@@ -101,6 +101,8 @@ def main():
             except Exception, e:
                 logging.error('An error was found: "%s"' % e)
                 return -4
+            except KeyboardInterrupt:
+                logging.info('Closing...')
             finally:
                 instance.terminate()
 

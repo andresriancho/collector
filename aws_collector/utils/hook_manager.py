@@ -34,6 +34,9 @@ class HookManager(object):
         :param script: The script to run
         :param params: A dict with the parameters
         """
+        log_args = (configured_hook_name, script, params)
+        logging.info('[%s] %s with params %r' % log_args)
+
         if self._should_run_locally(configured_hook_name, script, params):
             self._run_local_hook(configured_hook_name, script, params)
         else:
