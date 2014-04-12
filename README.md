@@ -61,6 +61,16 @@ All script paths are relative to the configuration file location. The scripts ar
 
 The files to be downloaded from the EC2 instance to the host running `collect` (ie. CPU and memory usage) is specified using `performance_results: /tmp/*.cpu`. Collect will copy all files matching that wildcard into the `output: ~/performance_info/` directory. See the output section for more information on directory structure inside the `output` directory.
 
+## AWS credentials
+
+`Collector` uses Amazon Web Services to start EC2 instances and run your code. In order to be able to start an instance you'll need to provide AWS credentials in the `~/.boto` file. The format is:
+
+```ini
+[Credentials]
+aws_access_key_id = ...
+aws_secret_access_key = ...
+```
+
 ## Running
 
 Collector takes two main arguments, the configuration file and a revision:
