@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90forceyes
 echo 'APT::Get::force-yes "true";' >> /etc/apt/apt.conf.d/90forceyes

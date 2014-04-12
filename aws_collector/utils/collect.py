@@ -18,6 +18,8 @@ def collect(performance_results, output, version, instance):
                                 we need to copy to our host.
     :param output: The local directory where we'll copy the remote files
     """
+    version = version.replace('/', '-')
+    output = os.path.expanduser(output)
     local_path = os.path.join(output, version, instance.id)
 
     if not os.path.exists(local_path):
@@ -29,7 +31,9 @@ def collect(performance_results, output, version, instance):
     sudo('tar -cjpf /tmp/%s %s' % (OUTPUT_FILE, performance_results))
 
     logging.info('Downloading performance information, might take a while...')
-    get(remote_path=OUTPUT_FILE, local_path=local_file_path)
+    remote_path = '/tmp/%s' % OUTPUT_FILE
+    sudo('ls -lah %s' % remote_path)
+    get(remote_path=remote_path, local_path=local_file_path)
 
     logging.debug('Decompress downloaded data...')
     with lcd(local_path):

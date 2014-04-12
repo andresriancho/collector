@@ -3,6 +3,7 @@ import argparse
 
 from fabric.api import settings
 from fabric.context_managers import shell_env
+from fabric.operations import open_shell
 
 from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
@@ -102,13 +103,20 @@ def main():
                 hook(BEFORE_AWS_TERMINATE_CFG)
             except Exception, e:
                 logging.error('An error was found: "%s"' % e)
+                if args.shell_on_fail:
+                    logging.debug('Opening a shell due to user\'s request')
+                    open_shell()
                 return -4
             except KeyboardInterrupt:
                 logging.info('Closing...')
             finally:
                 instance.terminate()
 
-    logging.info('Success.')
+            logging.info('Success.')
+            if args.shell_before_terminate:
+                logging.debug('Opening a shell due to user\'s request')
+                open_shell()
+
     return 0
 
 
@@ -119,6 +127,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Collect performance statistics')
     parser.add_argument('config', help='Configuration file (ie. config.yml)')
     parser.add_argument('version', help='The version variable to set on the remote EC2 instance')
-    parser.add_argument("--debug", help="Print debugging information", action="store_true")
+    parser.add_argument('--debug', action='store_true', help='Print debugging information", action="store_true')
+    parser.add_argument('--shell-on-fail', action='store_true', help='Open an interactive shell when a script fails')
+    parser.add_argument('--shell-before-terminate', action='store_true', help='Open an interactive shell before EC2 termination')
     args = parser.parse_args()
     return args

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 
 #
 #   Create the script

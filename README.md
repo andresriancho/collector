@@ -108,3 +108,5 @@ For an example of how the performance output of the `w3af` tool is analyzed, tak
  * You can run the same command several times to gather statistical information about your software and then merge/analyze it.
 
  * Collect tries to terminate the EC2 instances in all cases (success, errors, exceptions, etc.) but its not a bad idea to check if any EC2 instances are running before you leave the office.
+
+ * Advanced users might consider creating their own EC2 AMI with all the software requirements in order to reduce the `setup` time.
