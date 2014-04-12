@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 cd w3af
 
 cat << EOF > /tmp/test-script.w3af
@@ -33,4 +35,5 @@ start
 exit
 EOF
 
-./w3af_console -s /tmp/test-script.w3af
+# https://github.com/andresriancho/w3af/wiki/Profiling-memory-and-CPU-usage
+W3AF_PROFILING=1 ./w3af_console -s /tmp/test-script.w3af

@@ -2,6 +2,7 @@ import logging
 import argparse
 
 from fabric.api import settings
+from fabric.context_managers import shell_env
 
 from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
@@ -64,8 +65,13 @@ def main():
         return -2
 
     try:
-        ssh_is_ready = wait_ssh_ready(instance.public_ip)
+        ssh_is_ready = wait_ssh_ready(instance.public_dns_name)
     except KeyboardInterrupt:
+        logging.info('Closing...')
+        instance.terminate()
+        return -3
+    except Exception, e:
+        logging.error('%s' % e)
         instance.terminate()
         return -3
 
@@ -73,29 +79,30 @@ def main():
         logging.info('SSH is not ready. Terminating instance.')
         instance.terminate()
 
-    host_string = '%s@%s' % (user, instance.public_ip)
+    host_string = '%s@%s' % (user, instance.public_dns_name)
     key_filename = '%s.pem' % keypair
 
-    with settings(host_string=host_string,
-                  key_filename=key_filename,
-                  host=instance.public_ip):
-        try:
-            hook(AFTER_AWS_START_CFG)
-            hook(SETUP_CFG)
-            hook(RUN_CFG)
-            hook(BEFORE_COLLECT_CFG)
+    with shell_env(VERSION=version):
+        with settings(host_string=host_string,
+                      key_filename=key_filename,
+                      host=instance.public_dns_name):
+            try:
+                hook(AFTER_AWS_START_CFG)
+                hook(SETUP_CFG)
+                hook(RUN_CFG)
+                hook(BEFORE_COLLECT_CFG)
 
-            # My code
-            collect(performance_results, output)
+                # My code
+                collect(performance_results, output)
 
-            # Hooks
-            hook(AFTER_COLLECT_CFG)
-            hook(BEFORE_AWS_TERMINATE_CFG)
-        except Exception, e:
-            logging.error('An error was found: "%s"' % e)
-            return -4
-        finally:
-            instance.terminate()
+                # Hooks
+                hook(AFTER_COLLECT_CFG)
+                hook(BEFORE_AWS_TERMINATE_CFG)
+            except Exception, e:
+                logging.error('An error was found: "%s"' % e)
+                return -4
+            finally:
+                instance.terminate()
 
     logging.info('Success.')
     return 0

@@ -22,7 +22,7 @@ main:
   ec2_instance_size: m1.small
   security_group: collector
   keypair: collector
-  ami: ami-51e91b26
+  ami: ami-709ba735
   user: ubuntu
 
 before_aws_start:
@@ -53,7 +53,7 @@ before_aws_terminate:
   - some_other_command.py
 ```
 
-All script paths are relative to the configuration file location. The scripts are uploaded using SSH to the user's home directory and run from there.
+All script paths are relative to the configuration file location. The scripts are uploaded using SSH to the user's home directory and run using "sudo".
 
 The version of the software to run is set via the command line:
 ```console

@@ -2,9 +2,9 @@ import os
 import logging
 
 from fabric.operations import put
-from fabric.api import run, local
+from fabric.api import run, sudo
 
-from aws_collector.config.config import BEFORE_AWS_START_CFG, USER_CFG
+from aws_collector.config.config import BEFORE_AWS_START_CFG, MAIN_CFG, USER_CFG
 
 LOCAL = 'local'
 TIMEOUT = 'timeout'
@@ -65,17 +65,17 @@ class HookManager(object):
         logging.debug('Copying %s to the remote server...' % script)
 
         local_path = os.path.join(self.conf.config_path, script)
-        remote_path = '/home/%s' % self.conf.get(USER_CFG)
+        remote_path = '/home/%s' % self.conf.get(MAIN_CFG, USER_CFG)
         put(local_path, remote_path, mirror_local_mode=True)
 
     def _run_remote_script(self, configured_hook_name, script, params):
         """
         Run a script remotely
         """
-        command = '/home/%s/%s' % (self.conf.get(USER_CFG), script)
+        command = '/home/%s/%s' % (self.conf.get(MAIN_CFG, USER_CFG), script)
         timeout = self._get_command_timeout(params)
 
-        run(command, shell=True, timeout=timeout)
+        sudo(command, shell=True, timeout=timeout)
 
     def _get_command_timeout(self, params):
         """
