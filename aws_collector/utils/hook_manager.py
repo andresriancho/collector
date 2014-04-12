@@ -3,6 +3,7 @@ import logging
 
 from fabric.operations import put
 from fabric.api import run, sudo
+from fabric.exceptions import CommandTimeout
 
 from aws_collector.config.config import BEFORE_AWS_START_CFG, MAIN_CFG, USER_CFG
 
@@ -78,7 +79,10 @@ class HookManager(object):
         command = '/home/%s/%s' % (self.conf.get(MAIN_CFG, USER_CFG), script)
         timeout = self._get_command_timeout(params)
 
-        sudo(command, shell=True, timeout=timeout)
+        try:
+            sudo(command, shell=True, timeout=timeout)
+        except CommandTimeout:
+            logging.info('Configured timeout reached')
 
     def _get_command_timeout(self, params):
         """

@@ -96,3 +96,5 @@ For an example of how the performance output of the `w3af` tool is analyzed, tak
  * The performance information might be rather large (memory usage dump usually is 500MB in size), it might be a good idea to run the `collect` command in another EC2 instance to reduce the time it takes to download the information from the newly started EC2 instance to the host running `collect`.
 
  * You can run the same command several times to gather statistical information about your software and then merge/analyze it.
+
+ * Collect tries to terminate the EC2 instances in all cases (success, errors, exceptions, etc.) but its not a bad idea to check if any EC2 instances are running before you leave the office.
