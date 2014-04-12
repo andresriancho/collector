@@ -16,6 +16,7 @@ def collect(performance_results, output, version, instance):
     """
     logging.info('Downloading performance information, might take a while...')
     local_path = os.path.join(output, version, instance.id)
+    local_path += '/'
 
     if not os.path.exists(local_path):
         os.makedirs(local_path)
