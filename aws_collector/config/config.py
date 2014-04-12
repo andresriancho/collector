@@ -22,7 +22,7 @@ BEFORE_AWS_START_CFG = 'before_aws_start'
 AFTER_AWS_START_CFG = 'after_aws_start'
 BEFORE_COLLECT_CFG = 'before_collect'
 AFTER_COLLECT_CFG = 'after_collect'
-BEFORE_AWS_TERMINATE = 'before_aws_terminate'
+BEFORE_AWS_TERMINATE_CFG = 'before_aws_terminate'
 
 REQUIRED_CONFIGS = [(MAIN_CFG, OUTPUT_CFG),
                     (MAIN_CFG, PERFORMANCE_RESULTS_CFG),
@@ -35,7 +35,7 @@ REQUIRED_CONFIGS = [(MAIN_CFG, OUTPUT_CFG),
                     (RUN_CFG,)]
 
 HOOKS = {SETUP_CFG, RUN_CFG, BEFORE_AWS_START_CFG, AFTER_AWS_START_CFG,
-         BEFORE_COLLECT_CFG, AFTER_COLLECT_CFG, BEFORE_AWS_TERMINATE}
+         BEFORE_COLLECT_CFG, AFTER_COLLECT_CFG, BEFORE_AWS_TERMINATE_CFG}
 
 
 class Config(object):
@@ -46,8 +46,9 @@ class Config(object):
         self.config_file = config_file
         self.config_path = os.path.dirname(config_file)
         self.hooks = []
+        self.config = None
 
-    def check(self):
+    def parse(self):
         """
         Uses REQUIRED_CONFIGS to make sure all the required parameter names
         are correctly set.
@@ -58,6 +59,7 @@ class Config(object):
 
         """
         error_list = []
+        success = True
 
         #
         # Check for syntax errors
@@ -84,7 +86,7 @@ class Config(object):
         # Check the values provided in the configuration file
         #
         # Does the output directory exist?
-        output_dir = self.get(MAIN_CFG, OUTPUT_CFG)
+        output_dir = os.path.expanduser(self.get(MAIN_CFG, OUTPUT_CFG))
         if not os.path.isdir(output_dir):
             error_list.append('Output directory %s does not exist.' % output_dir)
 
@@ -98,8 +100,7 @@ class Config(object):
             if not os.path.exists(script_path):
                 error_list.append('%s does not exist.' % script_path)
                 success = False
-
-            if not os.access(script_path, os.X_OK):
+            elif not os.access(script_path, os.X_OK):
                 error_list.append('%s is not executable.' % script_path)
                 success = False
 
@@ -114,6 +115,7 @@ class Config(object):
                 hook_info = self.get(hook_name)
             except KeyError:
                 logging.debug('No %s hook provided' % hook_name)
+                continue
 
             # At this point the hook_info looks like this:
             #   ['compress_results.py']
@@ -162,7 +164,7 @@ class Config(object):
 def check_configuration(config_file):
     c = Config(config_file)
 
-    success, error_list = c.check()
+    success, error_list = c.parse()
     if not success:
         for error in error_list:
             logging.error(error)

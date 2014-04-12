@@ -7,19 +7,19 @@ from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
 from aws_collector.aws.keypair import create_keypair
 from aws_collector.utils.collect import collect
+from aws_collector.utils.hook_manager import HookManager
+from aws_collector.aws.ec2 import (spawn_host, create_security_group,
+                                   wait_ssh_ready)
 from aws_collector.config.config import (MAIN_CFG, OUTPUT_CFG,
                                          PERFORMANCE_RESULTS_CFG,
                                          EC2_INSTANCE_SIZE_CFG,
                                          SECURITY_GROUP_CFG, KEYPAIR_CFG,
-                                         AMI_CFG, USER_CFG)
-from aws_collector.utils.hook_manager import (HookManager,
-                                              BEFORE_AWS_START_HOOK,
-                                              AFTER_AWS_START_HOOK, SETUP_HOOK,
-                                              RUN_HOOK, BEFORE_COLLECT_HOOK,
-                                              AFTER_COLLECT_HOOK,
-                                              BEFORE_AWS_TERMINATE_HOOK)
-from aws_collector.aws.ec2 import (spawn_host, create_security_group,
-                                   wait_ssh_ready)
+                                         AMI_CFG, USER_CFG,
+                                         BEFORE_AWS_START_CFG,
+                                         AFTER_AWS_START_CFG, SETUP_CFG,
+                                         RUN_CFG, BEFORE_COLLECT_CFG,
+                                         AFTER_COLLECT_CFG,
+                                         BEFORE_AWS_TERMINATE_CFG)
 
 
 def main():
@@ -32,6 +32,7 @@ def main():
         return -9
 
     conf = Config(config_file)
+    conf.parse()
 
     # Configuration to spawn the EC2 instance
     instance_size = conf.get(MAIN_CFG, EC2_INSTANCE_SIZE_CFG)
@@ -44,10 +45,10 @@ def main():
     output = conf.get(MAIN_CFG, OUTPUT_CFG)
 
     # Shortcut
-    hook_manager = HookManager(config_file, version)
+    hook_manager = HookManager(conf, version)
     hook = hook_manager.hook
 
-    hook(BEFORE_AWS_START_HOOK)
+    hook(BEFORE_AWS_START_CFG)
 
     try:
         create_keypair(keypair)
@@ -79,17 +80,17 @@ def main():
                   key_filename=key_filename,
                   host=instance.public_ip):
         try:
-            hook(AFTER_AWS_START_HOOK)
-            hook(SETUP_HOOK)
-            hook(RUN_HOOK)
-            hook(BEFORE_COLLECT_HOOK)
+            hook(AFTER_AWS_START_CFG)
+            hook(SETUP_CFG)
+            hook(RUN_CFG)
+            hook(BEFORE_COLLECT_CFG)
 
             # My code
             collect(performance_results, output)
 
             # Hooks
-            hook(AFTER_COLLECT_HOOK)
-            hook(BEFORE_AWS_TERMINATE_HOOK)
+            hook(AFTER_COLLECT_CFG)
+            hook(BEFORE_AWS_TERMINATE_CFG)
         except Exception, e:
             logging.error('An error was found: "%s"' % e)
             return -4

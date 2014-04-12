@@ -1,13 +1,13 @@
-Collect performance metrics for any software using AWS. Automates the process of collecting performance metrics for your software, using AWS to run different versions. The advantage of using AWS is that you can run an endless number of variations of your software, without hitting any hardware limitation!
+Collect performance metrics for any software using AWS. Automates the process of running the software on EC2 with the objective of collecting performance metrics for your software. The advantage of using EC2 is that you can run an endless number of variations of your software, without hitting any hardware limitation!
 
 The `collector` helps with the following steps:
  * Start a new EC2 instance
  * Run user specified commands to configure the software to be measured
  * Copy the collected information from the EC2 instance into the `master` host for analysis
  
-The collector will only help in the process of gathering all the information, the analysis of the results is out of the scope of this project.
+The analysis of the results is out of the scope of this project.
 
-Since the collected information might be rather large (memory usage usually is 500MB in size), it might be a good idea to run the `collect` command in an EC2 instance: very fast network connection.
+Since the collected information might be rather large (memory usage usually is 500MB in size), it might be a good idea to run the `collect` command in another EC2 instance: very fast network connection.
 
 The collector **DOES NOT** capture any performance metrics. You'll have to setup the performance measuring tools yourself. [There are plans](https://github.com/andresriancho/collector/issues/1) to have some generic performance metric collectors, pull-requests are welcome.
 
@@ -38,7 +38,7 @@ setup:
 
 run:
   - run_w3af.py:
-    - timeout: 1h
+    - timeout: 60 # In minutes
 
 before_collect:
   - compress_results.py
@@ -53,7 +53,7 @@ before_aws_terminate:
   - some_other_command.py
 ```
 
-All script paths are relative to the configuration file location.
+All script paths are relative to the configuration file location. The scripts are uploaded using SSH to the user's home directory and run from there.
 
 The version of the software to run is set via the command line:
 ```console
