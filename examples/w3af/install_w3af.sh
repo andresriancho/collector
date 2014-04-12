@@ -3,7 +3,7 @@
 set -x
 
 apt-get install --quiet git git-core python-pip > /dev/null
-pip install --upgrade pip
+pip install --quiet --upgrade pip
 
 git clone --quiet https://github.com/andresriancho/w3af.git
 cd w3af

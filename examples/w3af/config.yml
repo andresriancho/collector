@@ -1,6 +1,6 @@
 main:
   output: ~/performance_info/
-  performance_results: /tmp/*w3af*
+  performance_results: /tmp/w3af-*
   ec2_instance_size: m1.small
   security_group: collector
   keypair: collector
@@ -13,7 +13,7 @@ setup:
 
 run:
   - run_w3af.sh:
-    - timeout: 15
+    - timeout: 10
 
 before_collect:
   - get_perf_data.sh

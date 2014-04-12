@@ -52,4 +52,5 @@ EOF
 
 # https://github.com/andresriancho/w3af/wiki/Profiling-memory-and-CPU-usage
 cd w3af
-W3AF_PROFILING=1 ./w3af_console -s /tmp/test-script.w3af
+export W3AF_PROFILING=1
+./w3af_console -s /tmp/test-script.w3af

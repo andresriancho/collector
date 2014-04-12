@@ -85,7 +85,9 @@ def main():
     with shell_env(VERSION=version):
         with settings(host_string=host_string,
                       key_filename=key_filename,
-                      host=instance.public_dns_name):
+                      host=instance.public_dns_name,
+                      connection_attempts=5,
+                      keepalive=1):
             try:
                 hook(AFTER_AWS_START_CFG)
                 hook(SETUP_CFG)

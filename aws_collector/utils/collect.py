@@ -2,6 +2,10 @@ import os
 import logging
 
 from fabric.operations import get
+from fabric.api import sudo, local, lcd
+
+
+OUTPUT_FILE = 'collect-output.tar.bz2'
 
 
 def collect(performance_results, output, version, instance):
@@ -14,11 +18,21 @@ def collect(performance_results, output, version, instance):
                                 we need to copy to our host.
     :param output: The local directory where we'll copy the remote files
     """
-    logging.info('Downloading performance information, might take a while...')
     local_path = os.path.join(output, version, instance.id)
-    local_path += '/'
 
     if not os.path.exists(local_path):
         os.makedirs(local_path)
 
-    get(remote_path=performance_results, local_path=local_path)
+    local_file_path = os.path.join(local_path, OUTPUT_FILE)
+
+    logging.info('Compressing output')
+    sudo('tar -cjpf /tmp/%s %s' % (OUTPUT_FILE, performance_results))
+
+    logging.info('Downloading performance information, might take a while...')
+    get(remote_path=OUTPUT_FILE, local_path=local_file_path)
+
+    logging.debug('Decompress downloaded data...')
+    with lcd(local_path):
+        local('tar -jxpvf %s' % OUTPUT_FILE)
+
+    os.unlink(local_file_path)
