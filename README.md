@@ -1,3 +1,5 @@
+## Collector
+
 Collect performance metrics for any software using AWS. Automates the process of running the software on EC2 with the objective of collecting performance metrics for your software. The advantage of using EC2 is that you can run an endless number of variations of your software, without hitting any hardware limitation!
 
 The `collector` helps with the following steps:
@@ -5,15 +7,15 @@ The `collector` helps with the following steps:
  * Run user specified commands to configure the software to be measured
  * Copy the collected information from the EC2 instance into the `master` host for analysis
  
-The analysis of the results is out of the scope of this project.
-
-Since the collected information might be rather large (memory usage usually is 500MB in size), it might be a good idea to run the `collect` command in another EC2 instance: very fast network connection.
-
 The collector **DOES NOT** capture any performance metrics. You'll have to setup the performance measuring tools yourself. [There are plans](https://github.com/andresriancho/collector/issues/1) to have some generic performance metric collectors, pull-requests are welcome.
+
+The analysis of the collected results is out of the scope of this project.
 
 While the collector itself is written in `Python` using the amazing `fabric` and `boto` libraries, the user can specify his scripts in any language, as well as test software written in any language.
 
-I'm using `yaml` for the configuration format, a complete configuration file would look like this:
+## Configuration
+
+A complete configuration file looks like this:
 
 ```yaml
 main:
@@ -38,7 +40,7 @@ setup:
 
 run:
   - run_w3af.py:
-    - timeout: 60 # In minutes
+    - timeout: 15 # In minutes
 
 before_collect:
   - compress_results.py
@@ -55,25 +57,42 @@ before_aws_terminate:
 
 All script paths are relative to the configuration file location. The scripts are uploaded using SSH to the user's home directory and run using "sudo".
 
-The version of the software to run is set via the command line:
+`timeout: 15` specifies that after 15 minutes the `collect` tool will kill the `run_w3af.py` process and continue with the next phases. This parameter is optional, if not specified the `run_w3af.py` command will run until it finishes by itself.
+
+The files to be downloaded from the EC2 instance to the host running `collect` (ie. CPU and memory usage) is specified using `performance_results: /tmp/*.cpu`. Collect will copy all files matching that wildcard into the `output: ~/performance_info/` directory. See the output section for more information on directory structure inside the `output` directory.
+
+## Running
+
+Collector takes two main arguments, the configuration file and a revision:
 ```console
 collect <config.yml> <revision>
 ```
 
-When starting a new instance, and running all the commands, we'll set a `VERSION` environment variable which will equal to the command line argument `revision`. The scripts should use it during `setup` to `git checkout` the revision to analyze, for example:
+Collector will set a `VERSION` environment variable for all commands run on the remote EC2 instance. The value of the `VERSION` variable will be equal to the command line argument `revision`. The scripts should use it during `setup` to `git checkout` to the revision to run, for example:
 
-```python
-import os
-version = os.environ['VERSION']
-git.checkout(version)
+```bash
+#!/bin/bash
+# Checkout the collector-specified version
+git checkout $VERSION
 ```
 
-A user that wants to collect five samples for the same revision can easily run `collect <config.yml> <revision>` on different consoles/via a script.  The information collected from the AWS instances is stored inside the `~/performance_info/` directory. Inside the directory we'll create this directory structure:
+## Output
+
+The information collected from the EC2 instances is stored inside the `output`directory specified in the configuration file, `~/performance_info/` in the example. Inside the provided directory `collect` create this directory structure:
  * `revision`
-   * Different sub-directories, one for each instance (based on the instance id) were `<revision>` was run
+   * `i-e45d5fb5`
+   * `i-936361c2`
+   * ...
+   * `i-ec6a68bd`
 
-The results to be collected (ie. CPU and memory usage) is specified using `performance_results: /tmp/*.cpu`. The script will copy all files matching that wildcard into the `output: ~/performance_info/` directory.
+Where `revision` was provided in the command line and `i-...` are the EC2 instance IDs where the software was run.
 
-`timeout: 1h` specifies that after one hour the `collect` tool will kill the `run_w3af.py` process and continue with the next phases. This parameter is optional, if not specified the `run_w3af.py` command will run until it finishes by itself.
+## Analysis
 
 For an example of how the performance output of the `w3af` tool is analyzed, take a look at the [w3af-performance-analysis](https://github.com/andresriancho/w3af-performance-analysis) repository.
+
+## Tips and tricks
+
+ * The performance information might be rather large (memory usage dump usually is 500MB in size), it might be a good idea to run the `collect` command in another EC2 instance to reduce the time it takes to download the information from the newly started EC2 instance to the host running `collect`.
+
+ * You can run the same command several times to gather statistical information about your software and then merge/analyze it.
