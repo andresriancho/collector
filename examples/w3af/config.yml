@@ -9,6 +9,7 @@ main:
 
 setup:
   - setup_apt.sh
+  - setup_psutil.sh
   - install_w3af.sh
 
 run:
@@ -16,4 +17,5 @@ run:
     - timeout: 10
 
 before_collect:
-  - get_perf_data.sh
+  - get_sys_perf_data.py
+  - get_http_perf_data.sh

@@ -127,7 +127,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Collect performance statistics')
     parser.add_argument('config', help='Configuration file (ie. config.yml)')
     parser.add_argument('version', help='The version variable to set on the remote EC2 instance')
-    parser.add_argument('--debug', action='store_true', help='Print debugging information", action="store_true')
+    parser.add_argument('--debug', action='store_true', help='Print debugging information')
     parser.add_argument('--shell-on-fail', action='store_true', help='Open an interactive shell when a script fails')
     parser.add_argument('--shell-before-terminate', action='store_true', help='Open an interactive shell before EC2 termination')
     args = parser.parse_args()

@@ -3,7 +3,7 @@
 set -x
 set -e
 
-apt-get install --quiet cython python-dev build-essential git git-core python-pip > /dev/null
+apt-get install --quiet cython git git-core > /dev/null
 pip install --quiet --upgrade pip
 
 wget https://launchpad.net/meliae/trunk/0.4/+download/meliae-0.4.0.tar.gz
