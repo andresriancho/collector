@@ -17,5 +17,6 @@ run:
     - timeout: 10
 
 before_collect:
+  - pkill_w3af.sh
   - get_sys_perf_data.py
   - get_http_perf_data.sh
