@@ -102,11 +102,17 @@ def main():
                 hook(AFTER_COLLECT_CFG)
                 hook(BEFORE_AWS_TERMINATE_CFG)
             except Exception, e:
-                logging.error('An error was found: "%s"' % e)
+                logging.error('A local exception was found: "%s"' % e)
                 if args.shell_on_fail:
                     logging.debug('Opening a shell due to user\'s request')
                     open_shell()
                 return -4
+            except SystemExit:
+                logging.error('A remote error was found: "%s"' % e)
+                if args.shell_on_fail:
+                    logging.debug('Opening a shell due to user\'s request')
+                    open_shell()
+                return -5
             except KeyboardInterrupt:
                 logging.info('Closing...')
             finally:
