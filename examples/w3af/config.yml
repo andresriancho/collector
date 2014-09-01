@@ -3,8 +3,8 @@ main:
   performance_results: /tmp/w3af-*
   ec2_instance_size: m1.small
   security_group: collector
-  keypair: collector
-  ami: ami-0b9c9f62
+  keypair: collector2
+  ami: ami-48eb2f20
   user: ubuntu
 
 setup:
