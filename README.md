@@ -20,6 +20,15 @@ While the collector itself is written in `Python` using the amazing `fabric` and
 `boto` libraries, the user can specify his scripts in any language, as well as
 test software written in any language.
 
+## Installation
+
+```
+sudo apt-get install python-pip git-core python-dev
+git clone https://github.com/andresriancho/collector.git
+cd collector
+pip install -r requirements.txt
+```
+
 ## Configuration
 
 A complete configuration file looks like this:
