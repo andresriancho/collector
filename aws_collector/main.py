@@ -108,7 +108,7 @@ def main():
                     open_shell()
                 return -4
             except SystemExit:
-                logging.error('A remote error was found: "%s"' % e)
+                logging.error('A remote error was found.')
                 if args.shell_on_fail:
                     logging.debug('Opening a shell due to user\'s request')
                     open_shell()
