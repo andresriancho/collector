@@ -1,3 +1,4 @@
 fabric==1.9.1
 boto==2.27.0
 PyYAML==3.11
+awscli==1.2.9

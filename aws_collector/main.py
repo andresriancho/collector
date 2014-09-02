@@ -96,7 +96,7 @@ def main():
                 hook(BEFORE_COLLECT_CFG)
 
                 # My code
-                collect(performance_results, output, version, instance)
+                collect(conf, performance_results, output, version, instance)
 
                 # Hooks
                 hook(AFTER_COLLECT_CFG)

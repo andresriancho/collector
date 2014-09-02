@@ -14,6 +14,7 @@ SECURITY_GROUP_CFG = 'security_group'
 KEYPAIR_CFG = 'keypair'
 AMI_CFG = 'ami'
 USER_CFG = 'user'
+S3_BUCKET = 'S3'
 
 # Hooks
 SETUP_CFG = 'setup'
