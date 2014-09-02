@@ -28,7 +28,7 @@ def collect(conf, performance_results, output, version, instance):
     if not os.path.exists(local_path):
         os.makedirs(local_path)
 
-    output_file = OUTPUT_FILE_FMT % (time.time(), version)
+    output_file = OUTPUT_FILE_FMT % (int(time.time()), version)
     local_file_path = os.path.join(local_path, output_file)
 
     logging.info('Compressing output')
