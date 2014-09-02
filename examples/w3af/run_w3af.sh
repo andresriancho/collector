@@ -10,12 +10,12 @@ cat << EOF > /tmp/test-script.w3af
 plugins
 output console,text_file
 output config text_file
-set output_file /tmp/output.txt
+set output_file /tmp/w3af-log-output.txt
 set http_output_file /tmp/output-http.txt
 set verbose True
 back
 output config console
-set verbose False
+set verbose True
 back
 
 audit sqli
