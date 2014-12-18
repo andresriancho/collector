@@ -56,4 +56,5 @@ cd w3af
 export W3AF_CPU_PROFILING=1
 export W3AF_MEMORY_PROFILING=1
 export W3AF_CORE_PROFILING=1
+export W3AF_THREAD_ACTIVITY=1
 ./w3af_console -s /tmp/test-script.w3af
