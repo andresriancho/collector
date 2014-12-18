@@ -92,10 +92,21 @@ def main():
             try:
                 hook(AFTER_AWS_START_CFG)
                 hook(SETUP_CFG)
-                hook(RUN_CFG)
+
+                try:
+                    # We let the user use Ctrl+C to stop the process, this is
+                    # good for the cases when there is no timeout and we want
+                    # to run "until something happens" (human detects that)
+                    hook(RUN_CFG)
+                except KeyboardInterrupt:
+                    msg = 'Ctrl+C hit, will stop running the remote task'
+                    logging.warning(msg)
+
+                # The user's code which will (most likely) kill the software
+                # under test
                 hook(BEFORE_COLLECT_CFG)
 
-                # My code
+                # My code that gets the files
                 collect(conf, performance_results, output, version, instance)
 
                 # Hooks

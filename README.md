@@ -77,7 +77,9 @@ are uploaded using SSH to the user's home directory and run using "sudo".
 `timeout: 15` specifies that after 15 minutes the `collect` tool will kill the
 `run_w3af.py` process and continue with the next phases. This parameter is
 optional, if not specified the `run_w3af.py` command will run until it finishes
-by itself.
+by itself. Another way to kill the running process is to hit Ctrl+C in the host
+running `collector`, that will stop the remote process and continue with the
+next phases.
 
 The files to be downloaded from the EC2 instance to the host running `collect`
 (ie. CPU and memory usage) is specified using `performance_results: /tmp/*.cpu`.
