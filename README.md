@@ -101,7 +101,7 @@ aws_secret_access_key = ...
 
 Collector takes two main arguments, the configuration file and a revision:
 ```console
-collect <config.yml> <revision>
+./collector <config.yml> <revision>
 ```
 
 Collector will set a `VERSION` environment variable for all commands run on the
@@ -138,9 +138,9 @@ repository.
 ## Tips and tricks
 
  * The performance information might be rather large (memory usage dump usually
- is 500MB in size), it might be a good idea to run the `collect` command in
+ is 500MB in size), it might be a good idea to run the `collector` command in
  another EC2 instance to reduce the time it takes to download the information
- from the newly started EC2 instance to the host running `collect`.
+ from the newly started EC2 instance to the host running `collector`.
 
  * You can run the same command several times to gather statistical information
  about your software and then merge/analyze it.
