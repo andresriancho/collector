@@ -32,6 +32,11 @@ target
 set target http://www.clarin.com/
 back
 
+misc-settings
+set max_discovery_time 20
+set fuzz_form_files false
+back
+
 start
 
 exit
@@ -57,4 +62,6 @@ export W3AF_CPU_PROFILING=1
 export W3AF_MEMORY_PROFILING=1
 export W3AF_CORE_PROFILING=1
 export W3AF_THREAD_ACTIVITY=1
+export W3AF_PROCESSES=1
+export W3AF_PSUTILS=1
 ./w3af_console -s /tmp/test-script.w3af
