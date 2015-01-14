@@ -15,8 +15,13 @@ cd ..
 # Install yappi
 sudo pip install --upgrade yappi
 
-git clone --quiet https://github.com/andresriancho/w3af.git
-cd w3af
+if [ -d "w3af" ]; then
+  cd w3af
+  git pull
+else
+  git clone --quiet https://github.com/andresriancho/w3af.git
+  cd w3af
+fi
 
 # Checkout the collector-specified version
 git checkout $VERSION
