@@ -32,6 +32,7 @@ def collect(conf, performance_results, output, version, instance):
     local_file_path = os.path.join(local_path, output_file)
 
     logging.info('Compressing output')
+    sudo('ls -lah %s' % performance_results)
     sudo('tar -cjpf /tmp/%s %s' % (output_file, performance_results))
 
     logging.info('Downloading performance information, might take a while...')
