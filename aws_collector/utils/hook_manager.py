@@ -2,7 +2,7 @@ import os
 import logging
 
 from fabric.operations import put
-from fabric.api import run, sudo, settings
+from fabric.api import run, sudo, settings, env
 from fabric.exceptions import CommandTimeout
 
 from aws_collector.config.config import BEFORE_AWS_START_CFG, MAIN_CFG, USER_CFG
@@ -10,6 +10,9 @@ from aws_collector.config.config import BEFORE_AWS_START_CFG, MAIN_CFG, USER_CFG
 LOCAL = 'local'
 TIMEOUT = 'timeout'
 LOCAL_HOOKS = {BEFORE_AWS_START_CFG}
+
+# Removes the [hostname] from each output line
+env.output_prefix = False
 
 
 class HookManager(object):
