@@ -15,7 +15,8 @@ setup:
 
 run:
   - run_w3af.sh:
-    - timeout: 15
+    - timeout: 240
+    - warn_only: true
 
 before_collect:
   - pkill_w3af.sh

@@ -128,7 +128,9 @@ class Config(object):
                     params = {}
                 else:
                     script = script_info.keys()[0]
-                    params = script_info[script][0]
+                    params = {}
+                    for param_dict in script_info[script]:
+                        params.update(param_dict)
 
                 self._append_hook(hook_name, script, params)
 

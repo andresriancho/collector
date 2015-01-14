@@ -2,7 +2,7 @@ import os
 import logging
 
 from fabric.operations import put
-from fabric.api import run, sudo
+from fabric.api import run, sudo, settings
 from fabric.exceptions import CommandTimeout
 
 from aws_collector.config.config import BEFORE_AWS_START_CFG, MAIN_CFG, USER_CFG
@@ -78,11 +78,19 @@ class HookManager(object):
         """
         command = '/home/%s/%s' % (self.conf.get(MAIN_CFG, USER_CFG), script)
         timeout = self._get_command_timeout(params)
+        warn_only = params.get('warn_only', False)
 
-        try:
-            sudo(command, shell=True, timeout=timeout)
-        except CommandTimeout:
-            logging.info('Configured timeout reached')
+        with settings(warn_only=warn_only):
+            try:
+                result = sudo(command, shell=True, timeout=timeout)
+            except CommandTimeout:
+                logging.info('Configured timeout reached')
+            else:
+                if result.failed:
+                    msg = 'The remote command returned exit code != 0,'\
+                          ' execution will continue but results may be'\
+                          ' incomplete/broken.'
+                    logging.warn(msg)
 
     def _get_command_timeout(self, params):
         """
