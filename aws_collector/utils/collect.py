@@ -33,6 +33,7 @@ def collect(conf, performance_results, output, version, instance):
 
     logging.info('Compressing output')
     sudo('ls -lah %s' % performance_results)
+    sudo('du -sh %s' % performance_results)
     sudo('tar -cjpf /tmp/%s %s' % (output_file, performance_results))
 
     logging.info('Downloading performance information, might take a while...')
