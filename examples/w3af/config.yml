@@ -4,7 +4,7 @@ main:
   ec2_instance_size: m1.small
   security_group: collector
   keypair: collector2
-  ami: ami-b4b3badc
+  ami: ami-38c3cb50
   user: ubuntu
   S3: w3af-performance-data
 
