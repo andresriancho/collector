@@ -20,7 +20,12 @@ Since the installation of docker in the EC2 instance and the download of the doc
 tests are run might take considerable time, we want to create a custom AMI and update it only
 when there is a major change in test methodology.
 
-## Test flow
+## w3af run configuration
+
+Enabling new `w3af` profiling modules or changing the script to be run the performance
+test doesn't require changes to the docker image. Just set the desired settings in `setup.sh`
+
+## Improving slow tests
 
 In most cases no changes are required and you just run:
 
