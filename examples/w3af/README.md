@@ -75,3 +75,8 @@ sudo docker build -t andresriancho/w3af-collector .
 sudo docker push andresriancho/w3af-collector
 ```
 
+## Implementation notes
+
+ * `install_dependencies.sh` is used to create the custom AMI and is also run each
+ time `./collector` is run. This is a feature, it allows me to run new experiments
+ with different EC2 dependencies without creating a new AMI each time.
