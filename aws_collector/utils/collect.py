@@ -1,9 +1,10 @@
 import os
 import logging
 import time
+import ConfigParser
 
 from fabric.operations import get
-from fabric.api import sudo, local, lcd
+from fabric.api import sudo, local, lcd, cd, shell_env
 
 from aws_collector.config.config import MAIN_CFG, S3_BUCKET
 
@@ -51,10 +52,35 @@ def collect(conf, performance_results, output, version, instance):
     except KeyError:
         pass
     else:
-        logging.debug('Uploading data to S3...')
-        s3_upload = S3_UPLOAD_CMD % (local_file_path,
-                                     target_bucket,
-                                     output_file)
-        local(s3_upload)
+        aws_access, aws_secret = get_aws_credentials()
+        if aws_access and aws_secret:
+            logging.debug('Uploading data to S3...')
+            s3_upload = S3_UPLOAD_CMD % (remote_path,
+                                         target_bucket,
+                                         output_file)
+            with cd('/tmp/'):
+                with shell_env(AWS_ACCESS_KEY=aws_access,
+                               AWS_SECRET_KEY=aws_secret):
+                    sudo(s3_upload)
+        else:
+            logging.info('Failed to upload data to S3: No AWS credentials'
+                         ' were configured in AWS_ACCESS_KEY AWS_SECRET_KEY')
 
     os.unlink(local_file_path)
+
+
+def get_aws_credentials():
+    """
+    :return: AWS_ACCESS_KEY AWS_SECRET_KEY from environment variables or ~/.boto
+    """
+    if os.environ.get('AWS_ACCESS_KEY') and os.environ.get('AWS_SECRET_KEY'):
+        return os.environ.get('AWS_ACCESS_KEY'), os.environ.get('AWS_SECRET_KEY')
+
+    elif os.path.exists(os.path.expanduser('~/.boto')):
+        config = ConfigParser.ConfigParser()
+        config.read(os.path.expanduser('~/.boto'))
+        aws_access = config.get('Credentials', 'aws_access_key_id', None)
+        aws_secret = config.get('Credentials', 'aws_secret_access_key', None)
+        return aws_access, aws_secret
+
+    return None, None
