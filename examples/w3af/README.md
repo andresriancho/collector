@@ -58,7 +58,8 @@ sudo docker build -t andresriancho/w3af-collector .
 sudo docker push andresriancho/w3af-collector
 
 # The build itself
-~/tools/packer/packer build -var aws_access_key=$AWS_ACCESS_KEY -var aws_secret_key=$AWS_SECRET_KEY template.packer
+~/tools/packer/packer build -var aws_access_key=$AWS_ACCESS_KEY \
+                            -var aws_secret_key=$AWS_SECRET_KEY template.packer
 ```
 
 Update the `config.yml` to point to the new AMI!
