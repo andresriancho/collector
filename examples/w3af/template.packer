@@ -1,0 +1,35 @@
+{
+  "description": "Collector-capable AMI for Amazon EC2",
+
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+
+  "builders":[ 
+      {
+          "type": "amazon-ebs",
+          "access_key": "{{user `aws_access_key`}}",
+          "secret_key": "{{user `aws_secret_key`}}",
+          "region": "us-east-1",
+          "source_ami": "ami-f43b3e9c",
+          "instance_type": "m3.medium",
+          "ssh_username": "ubuntu",
+          "ami_name": "Collector AMI - {{timestamp}}",
+          "tags": {
+            "OS": "Ubuntu",
+            "Release": "14.04",
+            "Description": "Docker and pre-pulled image: andresriancho/w3af-collector"
+          } 
+      }  
+  ],
+  
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "install_dependencies.sh",
+      "execute_command": "echo 'vagrant' | sudo -S sh '{{ .Path }}'"
+    }  
+  ]
+
+}

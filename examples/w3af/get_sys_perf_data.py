@@ -15,4 +15,4 @@ psutil_data = {'CPU': psutil.cpu_times()._asdict(),
                'Network': netinfo}
 
 data_as_json = json.dumps(psutil_data, sort_keys=True, indent=4)
-file('/tmp/w3af-psutil.data', 'w').write(data_as_json)
+file('/tmp/collector/w3af-psutil.data', 'w').write(data_as_json)
