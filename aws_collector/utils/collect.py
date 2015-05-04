@@ -58,6 +58,10 @@ def collect(conf, performance_results, output, version, instance):
             s3_upload = S3_UPLOAD_CMD % (remote_path,
                                          target_bucket,
                                          output_file)
+
+            # Needed to upload
+            sudo('sudo pip install --upgrade awscli')
+
             with cd('/tmp/'):
                 with shell_env(AWS_ACCESS_KEY_ID=aws_access,
                                AWS_SECRET_ACCESS_KEY=aws_secret):
