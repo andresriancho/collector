@@ -97,6 +97,7 @@ RUN git clone https://github.com/andresriancho/w3af.git
 # This will generate the installation script which we need for installing
 # the packages in the new python binary (with pymalloc)
 WORKDIR /home/w3af/w3af/
+RUN git checkout develop
 RUN python -c "from w3af.core.controllers.dependency_check.dependency_check import dependency_check;dependency_check()" || true
 RUN sed -i 's/sudo //;' /tmp/w3af_dependency_install.sh
 RUN /tmp/w3af_dependency_install.sh
