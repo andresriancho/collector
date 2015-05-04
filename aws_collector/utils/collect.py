@@ -59,8 +59,8 @@ def collect(conf, performance_results, output, version, instance):
                                          target_bucket,
                                          output_file)
             with cd('/tmp/'):
-                with shell_env(AWS_ACCESS_KEY=aws_access,
-                               AWS_SECRET_KEY=aws_secret):
+                with shell_env(AWS_ACCESS_KEY_ID=aws_access,
+                               AWS_SECRET_ACCESS_KEY=aws_secret):
                     sudo(s3_upload)
         else:
             logging.info('Failed to upload data to S3: No AWS credentials'
