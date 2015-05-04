@@ -1,10 +1,10 @@
 main:
   output: ~/performance_info/
   performance_results: /tmp/collector/w3af-*
-  ec2_instance_size: m1.small
+  ec2_instance_size: t1.micro
   security_group: collector
   keypair: collector2
-  ami: ami-38c3cb50
+  ami: ami-78666d10
   user: ubuntu
   S3: w3af-performance-data
 

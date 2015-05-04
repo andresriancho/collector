@@ -87,8 +87,11 @@ cp /tmp/startup.conf /home/w3af/.w3af/
 # This will generate the installation script, run it again just in case any new
 # dependencies are needed
 python -c "from w3af.core.controllers.dependency_check.dependency_check import dependency_check;dependency_check()" || true
-sed -i 's/sudo //;' /tmp/w3af_dependency_install.sh
-/tmp/w3af_dependency_install.sh
+
+if [ -f /tmp/w3af_dependency_install.sh ]; then
+    sed -i 's/sudo //;' /tmp/w3af_dependency_install.sh
+    /tmp/w3af_dependency_install.sh
+fi
 
 ./w3af_console -s /tmp/test-script.w3af
 EOF
