@@ -1,7 +1,7 @@
 main:
   output: ~/performance_info/
   performance_results: /tmp/collector/w3af-*
-  ec2_instance_size: t1.micro
+  ec2_instance_size: m3.medium
   security_group: collector
   keypair: collector2
   ami: ami-78666d10
@@ -18,7 +18,7 @@ setup:
 run:
   # Runs w3af
   - run_docker.sh:
-    - timeout: 240
+    - timeout: 10
     - warn_only: true
 
 before_collect:
