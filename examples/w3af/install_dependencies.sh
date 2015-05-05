@@ -7,7 +7,7 @@ curl -O https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
 
 sudo apt-get update
-sudo apt-get install -y build-essential python-dev
+sudo apt-get install -y build-essential python-dev htop
 sudo pip install --upgrade psutil
 sudo pip install --upgrade awscli
 
