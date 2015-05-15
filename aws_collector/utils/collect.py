@@ -37,14 +37,8 @@ def collect(conf, performance_results, output, version, instance):
     sudo('du -sh %s' % performance_results)
     sudo('tar -cjpf /tmp/%s %s' % (output_file, performance_results))
 
-    logging.info('Downloading performance information, might take a while...')
     remote_path = '/tmp/%s' % output_file
     sudo('ls -lah %s' % remote_path)
-    get(remote_path=remote_path, local_path=local_file_path)
-
-    logging.debug('Decompress downloaded data...')
-    with lcd(local_path):
-        local('tar -jxpvf %s' % output_file)
 
     # Uploading to S3
     try:
@@ -69,6 +63,14 @@ def collect(conf, performance_results, output, version, instance):
         else:
             logging.info('Failed to upload data to S3: No AWS credentials'
                          ' were configured in AWS_ACCESS_KEY AWS_SECRET_KEY')
+
+    # Downloading to my workstation
+    logging.info('Downloading performance information, might take a while...')
+    get(remote_path=remote_path, local_path=local_file_path)
+
+    logging.debug('Decompress downloaded data...')
+    with lcd(local_path):
+        local('tar -jxpvf %s' % output_file)
 
     os.unlink(local_file_path)
 
