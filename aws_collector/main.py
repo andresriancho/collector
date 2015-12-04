@@ -137,13 +137,33 @@ def main():
     return 0
 
 
+def version_revision(value):
+    """
+    Makes sure that the version argument is a revision and not "master" or
+    "develop".
+
+    :return: The revision
+    """
+    ALLOWED_REVISION_CHARS = 'abcdef0123456789'
+
+    for char in value:
+        if char not in ALLOWED_REVISION_CHARS:
+            raise argparse.ArgumentTypeError('The version parameter must be'
+                                             ' a git revision, not a branch'
+                                             ' name.')
+
+    return value
+
+
 def parse_args():
     """
     return: A tuple with config_file, version.
     """
     parser = argparse.ArgumentParser(description='Collect performance statistics')
     parser.add_argument('config', help='Configuration file (ie. config.yml)')
-    parser.add_argument('version', help='The version variable to set on the remote EC2 instance')
+    parser.add_argument('version',
+                        help='The version value to set on the remote EC2 instance',
+                        type=version_revision)
     parser.add_argument('--debug', action='store_true', help='Print debugging information')
     parser.add_argument('--shell-on-fail', action='store_true', help='Open an interactive shell when a script fails')
     parser.add_argument('--shell-before-terminate', action='store_true', help='Open an interactive shell before EC2 termination')
