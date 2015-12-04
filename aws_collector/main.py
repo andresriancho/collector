@@ -1,9 +1,10 @@
+import os
 import logging
 import argparse
 
 from fabric.api import settings
 from fabric.context_managers import shell_env
-from fabric.operations import open_shell
+from fabric.operations import open_shell, put, run
 
 from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
@@ -23,6 +24,8 @@ from aws_collector.config.config import (MAIN_CFG, OUTPUT_CFG,
                                          AFTER_COLLECT_CFG,
                                          BEFORE_AWS_TERMINATE_CFG)
 
+REMOTE_CONFIG_DIR = '/tmp/config'
+
 
 def main():
     args = parse_args()
@@ -32,6 +35,8 @@ def main():
 
     if not check_configuration(config_file):
         return -9
+
+    config_directory, _ = os.path.split(config_file)
 
     conf = Config(config_file)
     conf.parse()
@@ -90,6 +95,13 @@ def main():
                       connection_attempts=5,
                       keepalive=1):
             try:
+                # Copy the configuration to the remote server so we can include
+                # it in the output later
+                run('mkdir %s' % REMOTE_CONFIG_DIR)
+                put(local_path='%s/*' % config_directory,
+                    remote_path=REMOTE_CONFIG_DIR)
+
+                # Start with the hooks
                 hook(AFTER_AWS_START_CFG)
                 hook(SETUP_CFG)
 
@@ -127,7 +139,9 @@ def main():
             except KeyboardInterrupt:
                 logging.info('Closing...')
             finally:
+                logging.info('Terminating instance...')
                 instance.terminate()
+                logging.info('Done!')
 
             logging.info('Success.')
             if args.shell_before_terminate:
@@ -155,12 +169,29 @@ def version_revision(value):
     return value
 
 
+def existing_directory(value):
+    if not os.path.exists(value):
+        raise argparse.ArgumentTypeError('The configuration directory does not'
+                                         ' exist.')
+
+    if not os.path.isdir(value):
+        raise argparse.ArgumentTypeError('%s is not a directory' % value)
+
+    config_file = os.path.join(value, 'config.yml')
+    if not os.path.exists(config_file):
+        raise argparse.ArgumentTypeError('%s does not exist' % config_file)
+
+    return config_file
+
+
 def parse_args():
     """
     return: A tuple with config_file, version.
     """
     parser = argparse.ArgumentParser(description='Collect performance statistics')
-    parser.add_argument('config', help='Configuration file (ie. config.yml)')
+    parser.add_argument('config',
+                        help='Configuration directory containing config.yml',
+                        type=existing_directory)
     parser.add_argument('version',
                         help='The version value to set on the remote EC2 instance',
                         type=version_revision)

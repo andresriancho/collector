@@ -101,10 +101,16 @@ aws_secret_access_key = ...
 
 ## Running
 
-Collector takes two main arguments, the configuration file and a revision:
+Collector takes two main arguments, the directory containing the configuration
+file and all initialization scripts, and a revision:
 ```console
-./collector <config.yml> <revision>
+./collector <config-directory> <revision>
 ```
+
+We recommend creating a unique directory for the configuration file (config.yml)
+and the supporting scripts (see `examples/w3af`). The contents of this directory
+will be included in the output bzip2 file to allow you to reproduce the test
+again in the future.
 
 Collector will set a `VERSION` environment variable for all commands run on the
 remote EC2 instance. The value of the `VERSION` variable will be equal to the

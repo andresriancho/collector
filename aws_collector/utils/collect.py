@@ -8,7 +8,7 @@ from fabric.api import sudo, local, lcd, cd, shell_env
 
 from aws_collector.config.config import MAIN_CFG, S3_BUCKET
 
-OUTPUT_FILE_FMT = '%s-%s-collect-output.tar.bz2'
+OUTPUT_FILE_FMT = '%s-%s-collect-output.tar'
 S3_UPLOAD_CMD = 'aws s3 cp --region us-east-1 %s s3://%s/%s'
 
 
@@ -32,12 +32,23 @@ def collect(conf, performance_results, output, version, instance):
     output_file = OUTPUT_FILE_FMT % (int(time.time()), version)
     local_file_path = os.path.join(local_path, output_file)
 
-    logging.info('Compressing output')
+    logging.info('Output statistics:')
     sudo('ls -lah %s' % performance_results)
     sudo('du -sh %s' % performance_results)
-    sudo('tar -cjpf /tmp/%s %s' % (output_file, performance_results))
 
-    remote_path = '/tmp/%s' % output_file
+    logging.info('Compressing output...')
+    # performance_results looks like /tmp/collector/w3af-*
+    path, file_glob = os.path.split(performance_results)
+    with cd(path):
+        sudo('tar -cpvf /tmp/%s %s' % (output_file, file_glob))
+
+    # Append config information to tar
+    sudo('tar -C /tmp/ -rpvf /tmp/%s config' % output_file)
+
+    # Compress tar file
+    sudo('bzip2 -9 /tmp/%s' % output_file)
+
+    remote_path = '/tmp/%s.bz2' % output_file
     sudo('ls -lah %s' % remote_path)
 
     # Uploading to S3
