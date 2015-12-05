@@ -4,7 +4,7 @@ import argparse
 
 from fabric.api import settings
 from fabric.context_managers import shell_env
-from fabric.operations import open_shell, put, run
+from fabric.operations import open_shell, put, run, local
 
 from aws_collector.utils.log import configure_logging
 from aws_collector.config.config import Config, check_configuration
@@ -98,6 +98,12 @@ def main():
                 # Copy the configuration to the remote server so we can include
                 # it in the output later
                 run('mkdir %s' % REMOTE_CONFIG_DIR)
+
+                # Save the collector revision
+                collector_revision = local('git rev-parse HEAD').strip()
+                run('echo %s > %s/collector.revision' % (collector_revision,
+                                                         REMOTE_CONFIG_DIR))
+
                 put(local_path='%s/*' % config_directory,
                     remote_path=REMOTE_CONFIG_DIR)
 
