@@ -4,7 +4,7 @@ main:
   ec2_instance_size: m3.medium
   security_group: collector
   keypair: collector2
-  ami: ami-78666d10
+  ami: ami-feade294
   user: ubuntu
   S3: w3af-performance-data
 
