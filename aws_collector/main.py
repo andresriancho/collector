@@ -100,7 +100,7 @@ def main():
                 run('mkdir %s' % REMOTE_CONFIG_DIR)
 
                 # Save the collector revision
-                collector_revision = local('git rev-parse HEAD').strip()
+                collector_revision = local('git rev-parse HEAD', capture=True).strip()
                 run('echo %s > %s/collector.revision' % (collector_revision,
                                                          REMOTE_CONFIG_DIR))
 
