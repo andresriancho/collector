@@ -104,6 +104,9 @@ def main():
                 run('echo %s > %s/collector.revision' % (collector_revision,
                                                          REMOTE_CONFIG_DIR))
 
+                # Save the version
+                run('echo %s > %s/version' % (version, REMOTE_CONFIG_DIR))
+
                 description = file('%s/description' % config_directory, 'w')
                 description.write(args.description)
                 description.close()
