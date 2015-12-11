@@ -48,7 +48,7 @@ set target http://www.clarin.com/
 back
 
 misc-settings
-set max_discovery_time 20
+set max_discovery_time 25
 set fuzz_form_files false
 back
 
