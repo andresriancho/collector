@@ -1,5 +1,5 @@
 main:
-  output: ~/performance_info/
+  output: ~/performance-info/
   performance_results: /tmp/collector/w3af-*
   ec2_instance_size: m3.medium
   security_group: collector
