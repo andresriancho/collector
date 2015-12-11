@@ -54,3 +54,6 @@ docs/_build/
 .idea
 
 *.pem
+
+# Ignore stuff generated during runs
+examples/w3af/description

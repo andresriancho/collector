@@ -104,7 +104,7 @@ aws_secret_access_key = ...
 Collector takes two main arguments, the directory containing the configuration
 file and all initialization scripts, and a revision:
 ```console
-./collector <config-directory> <revision>
+./collector <config-directory> <revision> --description=<description>
 ```
 
 We recommend creating a unique directory for the configuration file (config.yml)

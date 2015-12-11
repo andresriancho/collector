@@ -104,6 +104,10 @@ def main():
                 run('echo %s > %s/collector.revision' % (collector_revision,
                                                          REMOTE_CONFIG_DIR))
 
+                description = file('%s/description' % config_directory, 'w')
+                description.write(args.description)
+                description.close()
+
                 put(local_path='%s/*' % config_directory,
                     remote_path=REMOTE_CONFIG_DIR)
 
@@ -201,6 +205,9 @@ def parse_args():
     parser.add_argument('version',
                         help='The version value to set on the remote EC2 instance',
                         type=version_revision)
+    parser.add_argument('--description',
+                        help='Description for this collector run',
+                        required=True)
     parser.add_argument('--debug', action='store_true', help='Print debugging information')
     parser.add_argument('--shell-on-fail', action='store_true', help='Open an interactive shell when a script fails')
     parser.add_argument('--shell-before-terminate', action='store_true', help='Open an interactive shell before EC2 termination')
