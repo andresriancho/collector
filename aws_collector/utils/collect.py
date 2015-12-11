@@ -23,14 +23,8 @@ def collect(conf, performance_results, output, version, instance):
     :param output: The local directory where we'll copy the remote files
     """
     version = version.replace('/', '-')
-    output = os.path.expanduser(output)
-    local_path = os.path.join(output, version, instance.id)
-
-    if not os.path.exists(local_path):
-        os.makedirs(local_path)
 
     output_file = OUTPUT_FILE_FMT % (int(time.time()), version)
-    local_file_path = os.path.join(local_path, output_file)
 
     logging.info('Output statistics:')
     sudo('ls -lah %s' % performance_results)
@@ -47,8 +41,9 @@ def collect(conf, performance_results, output, version, instance):
 
     # Compress tar file
     sudo('bzip2 -9 /tmp/%s' % output_file)
+    output_file = '%s.bz2' % output_file
 
-    remote_path = '/tmp/%s.bz2' % output_file
+    remote_path = '/tmp/%s' % output_file
     sudo('ls -lah %s' % remote_path)
 
     # Uploading to S3
@@ -77,6 +72,34 @@ def collect(conf, performance_results, output, version, instance):
 
     # Downloading to my workstation
     logging.info('Downloading performance information, might take a while...')
+
+    # Create the output directory if it doesn't exist
+    output = os.path.expanduser(output)
+    local_path = os.path.join(output, version)
+
+    #
+    # Before I stored the output in ~/performance_info/<version>/<instance-id>
+    # but that did not help with the analysis phase, since I had to remember
+    # those "long" EC2 instance IDs and... it had nothing to do with the
+    # analysis itself.
+    #
+    # Now I just use ~/performance_info/<version>/<unique-incremental-id>
+    # where unique-incremental-id is just a number that starts from 0 and
+    # increments
+    #
+    i = -1
+
+    while True:
+        i += 1
+        potential_output_path = os.path.join(local_path, '%s' % i)
+
+        if not os.path.exists(potential_output_path):
+            os.makedirs(potential_output_path)
+            local_path = potential_output_path
+            break
+
+    # Get the remote file with all the data
+    local_file_path = os.path.join(local_path, output_file)
     get(remote_path=remote_path, local_path=local_file_path)
 
     logging.debug('Decompress downloaded data...')
