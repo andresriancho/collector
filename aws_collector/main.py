@@ -137,6 +137,9 @@ def main():
                 # Hooks
                 hook(AFTER_COLLECT_CFG)
                 hook(BEFORE_AWS_TERMINATE_CFG)
+
+                # Summary
+                logging.info('Stored collector results at %s' % output)
             except Exception, e:
                 logging.error('A local exception was found: "%s"' % e)
                 if args.shell_on_fail:
