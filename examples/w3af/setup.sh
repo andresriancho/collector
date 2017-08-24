@@ -44,7 +44,7 @@ grep path_disclosure
 
 back
 target
-set target http://www.clarin.com/
+set target https://www.clarin.com/
 back
 
 misc-settings
